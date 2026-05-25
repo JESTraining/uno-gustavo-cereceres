@@ -1,0 +1,28 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
+
+services:
+  notificationengine.api:
+    image: notificationengine
+    build:
+      context: .
+      dockerfile: NotificationEngine/Dockerfile
+    ports:
+      - 5205:5205
+
+  notificationengine.database:
+    image: postgres:latest
+    container_name: notificationengine.database
+    environment:
+      - POSTGRES_DB=Events
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      -./.containers/events-db:/var/lib/postgresql/data
+    ports:
+      -5432:5432
+
+  notificationengine.cache:
+    image: redis:latest
+    restart: always
+    ports:
+      -'6379:6379'
